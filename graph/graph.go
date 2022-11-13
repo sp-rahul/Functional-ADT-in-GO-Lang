@@ -16,41 +16,60 @@ type vertex struct {
 }
 
 //Add Edge
-func (g Graph) addEdge(from, to int) Graph {
-	//Get vertex
-	fromVertex, err1 := g.getVertex(from)
-	toVertex, err2 := g.getVertex(to)
 
-	// Check error
-	if err1 == false || err2 == false {
-		err := fmt.Errorf("Invalid edge () %v --> %v )", from, to)
-		fmt.Println(err.Error())
-
-	} else if contains(fromVertex.adjacent, to) {
-
-		err := fmt.Errorf("Already  edge () %v --> %v )", from, to)
-		fmt.Println(err.Error())
-
-	} else {
-
-		// Add edge
-		fromVertex = g.vertices[from]
-
-		fromVertex.adjacent = append(fromVertex.adjacent, toVertex)
-
-	}
-	return g
+func (graph Graph) addEdge(from, to int) Graph {
+	fromVertex := graph.getVertex(from)
+	toVertex := graph.getVertex(to)
+	fromVertex.adjacent = append(graph.getVertex(from).adjacent, toVertex)
+	graph = graph.replaceAdacencyList(from, fromVertex)
+	return graph
 }
 
+// Replace the new adjacent nodes list with the previous -> making immutable
+func (graph Graph) replaceAdacencyList(k int, vertx vertex) Graph {
+	for i, v := range graph.vertices {
+		if v.key == k {
+			graph.vertices[i].adjacent = vertx.adjacent
+		}
+	}
+	return graph
+}
+
+// func (g Graph) addEdge(from, to int) Graph {
+// 	//Get vertex
+// 	fromVertex, err1 := g.getVertex(from)
+// 	toVertex, err2 := g.getVertex(to)
+
+// 	// Check error
+// 	if err1 == false || err2 == false {
+// 		err := fmt.Errorf("Invalid edge () %v --> %v )", from, to)
+// 		fmt.Println(err.Error())
+
+// 	} else if contains(fromVertex.adjacent, to) {
+
+// 		err := fmt.Errorf("Already  edge () %v --> %v )", from, to)
+// 		fmt.Println(err.Error())
+
+// 	} else {
+
+// 		// Add edge
+// 		fromVertex = g.vertices[from]
+
+// 		fromVertex.adjacent = append(fromVertex.adjacent, toVertex)
+
+// 	}
+// 	return g
+// }
+
 // Get vertex
-func (g Graph) getVertex(k int) (vertex, bool) {
+func (g Graph) getVertex(k int) vertex {
 	for i, v := range g.vertices {
 		if v.key == k {
-			return g.vertices[i], true
+			return g.vertices[i]
 		}
 	}
 
-	return g.vertices[0], false
+	return g.vertices[0]
 
 }
 
